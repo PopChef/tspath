@@ -30,7 +30,6 @@
     "chalk": "^2.3.0",
     "escodegen": "^1.8.1",
     "esprima": "^4.0.0",
-    "prompt-confirm": "^1.2.0",
     "typescript": "^2.4.2",
     "ts-simple-ast": "10.5.0"
   },

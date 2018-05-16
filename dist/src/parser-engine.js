@@ -46,10 +46,6 @@ class ParserEngine {
         process.exit(code);
     }
     setProjectPath(projectPath) {
-        /*
-        this.projectPath = process.cwd();
-        console.log("CURRENT:", this.projectPath);
-        */
         if (!utils_1.Utils.isEmpty(projectPath) && !this.validateProjectPath(projectPath)) {
             log(chalk.red.bold("Project Path \"" + chalk.underline(projectPath) + "\" is invalid!"));
             return false;
@@ -97,19 +93,12 @@ class ParserEngine {
         else {
             log(chalk.yellow.bold("Parsing project at: ") + '"' + this.projectPath + '"');
         }
-        this.appRoot = path.resolve(this.projectPath, this.projectOptions.baseUrl);
-        this.appRoot = path.resolve(this.appRoot, this.projectOptions.outDir);
+        this.jsAppRoot = path.resolve(this.projectPath, this.projectOptions.outDir);
         let JSfileList = new Array();
-        this.walkSync(this.appRoot, JSfileList, ".js");
+        this.walkSync(this.jsAppRoot, JSfileList, ".js");
         for (var i = 0; i < JSfileList.length; i++) {
             let filename = JSfileList[i];
             this.processJSFile(filename);
-        }
-        let TSFileList = new Array();
-        this.walkSync(this.appRoot, TSFileList, ".ts");
-        for (var i = 0; i < TSFileList.length; i++) {
-            let filename = TSFileList[i];
-            this.processTSFile(filename);
         }
         log(chalk.bold("Total files processed:"), this.nrFilesProcessed);
         log(chalk.bold("Total paths processed:"), this.nrPathsProcessed);
@@ -132,7 +121,7 @@ class ParserEngine {
             if (jsRequire.substring(0, alias.length) == alias) {
                 var result = jsRequire.replace(alias, mapping);
                 utils_1.Utils.replaceDoubleSlashes(result);
-                var absoluteJsRequire = path.join(this.appRoot, result);
+                var absoluteJsRequire = path.join(this.jsAppRoot, result);
                 var sourceDir = path.dirname(sourceFilename);
                 let relativePath = path.relative(sourceDir, absoluteJsRequire);
                 /* If the path does not start with .. it´ not a sub directory

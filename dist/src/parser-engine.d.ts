@@ -3,7 +3,7 @@ export declare class ParserEngine {
     projectPath: string;
     nrFilesProcessed: number;
     nrPathsProcessed: number;
-    appRoot: string;
+    jsAppRoot: string;
     projectOptions: ProjectOptions;
     tsConfig: any;
     constructor();

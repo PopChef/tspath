@@ -24,12 +24,8 @@
 
  =----------------------------------------------------------------= */
 
-let fs         = require("fs");
-let path       = require("path");
 let chalk      = require("chalk");
 const log      = console.log;
-
-let Confirm = require('prompt-confirm');
 
 import { ParserEngine }     from "./parser-engine";
 import { ParentFileFinder } from "./parent-file-finder";
@@ -43,25 +39,15 @@ export class TSPath {
 	constructor() {
 		log(chalk.yellow("TSPath " + pkg.version));
 		let args = process.argv.slice(2);
-		let param = args[0];
 
 		let projectPath = process.cwd();
 
 		let findResult = ParentFileFinder.findFile(projectPath, TS_CONFIG);
 
-		var scope = this;
+		let scope = this;
 
-		if (param == "-f" && findResult.fileFound) {
-			scope.processPath(findResult.path);
-
-		} else if (findResult.fileFound) {
-			let confirm = new Confirm("Process project at: <"  + findResult.path +  "> ?")
-				.ask(function(answer) {
-					if (answer) {
-						scope.processPath(findResult.path);
-					}
-				});
-
+		if (findResult.fileFound) {
+      scope.processPath(findResult.path);
 		} else {
 			log(chalk.bold("No project root found!"));
 		}
@@ -71,17 +57,6 @@ export class TSPath {
 		if (this.engine.setProjectPath(projectPath)) {
 			this.engine.execute();
 		}
-	}
-
-	public parseCommandLineParam(): string {
-		let args = process.argv.slice(2);
-		var param: string = null;
-
-		if (args.length != 1) {
-			param = args[0];
-		}
-
-		return param;
 	}
 }
 
