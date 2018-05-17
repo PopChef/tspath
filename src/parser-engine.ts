@@ -207,7 +207,7 @@ export class ParserEngine {
 		var ast = null;
 
 		try {
-			ast = esprima.parse(inputSourceCode); //, { raw: true, tokens: true, range: true, comment: true });
+			ast = esprima.parse(inputSourceCode, { raw: true, tokens: true, range: true, comment: true });
 		}
 		catch(error) {
 			console.log("Unable to parse file:", filename);
@@ -216,13 +216,15 @@ export class ParserEngine {
 		}
 
 		this.traverseSynTree(ast, this, function(node) {
-			if (node != undefined && node.type == "CallExpression" && node.callee.name == "require") {
+			if (node !== undefined && node.type === "CallExpression" && node.callee.name === "require") {
 				node.arguments[0] = scope.processJsRequire(node.arguments[0], filename);
 			}
 		});
 
 		let option = { comment: true, format: { compact: false,  quotes: '"' }};
 		let finalSource = escodegen.generate(ast, option);
+		let parts = filename.split('/');
+		finalSource += "\n//# sourceMappingUrl=" + parts[parts.length - 1] + ".map";
 
 		try {
 			this.saveFileContents(filename, finalSource);
@@ -241,8 +243,8 @@ export class ParserEngine {
 		this.nrFilesProcessed++;
 		let scope = this;
 
-		const fileToProcess = project.addExistingSourceFile(filename)
-		const exportDeclarations = fileToProcess.getExportDeclarations()
+		const fileToProcess = project.addExistingSourceFile(filename);
+		const exportDeclarations = fileToProcess.getExportDeclarations();
 		const importDeclarations = fileToProcess.getImportDeclarations();
 
 		exportDeclarations.forEach(exportDeclaration => {

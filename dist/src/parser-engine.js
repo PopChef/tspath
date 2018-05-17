@@ -160,7 +160,7 @@ class ParserEngine {
         let inputSourceCode = fs.readFileSync(filename, type_definitions_2.FILE_ENCODING);
         var ast = null;
         try {
-            ast = esprima.parse(inputSourceCode); //, { raw: true, tokens: true, range: true, comment: true });
+            ast = esprima.parse(inputSourceCode, { raw: true, tokens: true, range: true, comment: true });
         }
         catch (error) {
             console.log("Unable to parse file:", filename);
@@ -168,12 +168,14 @@ class ParserEngine {
             this.exit();
         }
         this.traverseSynTree(ast, this, function (node) {
-            if (node != undefined && node.type == "CallExpression" && node.callee.name == "require") {
+            if (node !== undefined && node.type === "CallExpression" && node.callee.name === "require") {
                 node.arguments[0] = scope.processJsRequire(node.arguments[0], filename);
             }
         });
-        let option = { comment: true, format: { compact: true, quotes: '"' } };
+        let option = { comment: true, format: { compact: false, quotes: '"' } };
         let finalSource = escodegen.generate(ast, option);
+        let parts = filename.split('/');
+        finalSource += "\n//# sourceMappingUrl=" + parts[parts.length - 1] + ".map";
         try {
             this.saveFileContents(filename, finalSource);
         }
