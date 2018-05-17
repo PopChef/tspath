@@ -221,7 +221,7 @@ export class ParserEngine {
 			}
 		});
 
-		let option = { comment: true, format: { compact: true,  quotes: '"' }};
+		let option = { comment: true, format: { compact: false,  quotes: '"' }};
 		let finalSource = escodegen.generate(ast, option);
 
 		try {
